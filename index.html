@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💘</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    font-family: 'Arial', sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .card {
+    background: white;
+    max-width: 500px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 30px 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  h1 {
+    color: #ff4d6d;
+    font-size: 26px;
+    margin-bottom: 10px;
+    word-wrap: break-word;
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  button {
+    padding: 12px 22px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  #yesBtn {
+    background: #ff4d6d;
+    color: white;
+  }
+
+  #noBtn {
+    background: #ddd;
+    color: #333;
+  }
+
+  .letter {
+    display: none;
+    font-size: 16px;
+    color: #444;
+    line-height: 1.6;
+    margin-top: 20px;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  .letter h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .heart {
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  /* Floating hearts */
+  .floating-heart {
+    position: fixed;
+    bottom: -20px;
+    font-size: 20px;
+    animation: floatUp 6s linear forwards;
+    opacity: 0.8;
+    z-index: 1;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+  }
+
+  /* Animated name */
+  .name {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff4d6d;
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 5px #ff4d6d; }
+    to { text-shadow: 0 0 15px #ff4d6d; }
+  }
+
+  /* Surprise letter popup */
+  #surprise {
+    display: none;
+    font-size: 40px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  #surprise-text {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .card {
+      padding: 20px 15px;
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+
+    .name {
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 15px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card" id="card">
+  <h1 id="greeting">Hey <span class="name">Harshita</span> 💖</h1>
+  <p id="question">Would you like to be my Valentine?</p>
+
+  <div class="buttons">
+    <button id="yesBtn">YES 💕</button>
+    <button id="noBtn">NO 🙃</button>
+  </div>
+
+  <div id="surprise">
+    <div>📩</div>
+    <div id="surprise-text"><h2>There is a surprise waiting for you...</h2>
+    </div>
+  </div>
+
+  <div class="letter" id="letter"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const greeting = document.getElementById("greeting");
+  const question = document.getElementById("question");
+  const buttons = document.querySelector(".buttons");
+  const letter = document.getElementById("letter");
+  const music = document.getElementById("bgMusic");
+  const surprise = document.getElementById("surprise");
+
+  let musicStarted = false;
+
+  // Start music on first click
+  document.body.addEventListener("click", () => {
+    if (!musicStarted) {
+      music.muted = false;
+      music.play();
+      musicStarted = true;
+    }
+  });
+
+  // Floating hearts
+  function createFloatingHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("floating-heart");
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 20 + 15 + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+  }
+
+  setInterval(createFloatingHeart, 500); // floating hearts on page
+
+  // Move NO button
+  function moveNoButton() {
+    const cardRect = document.getElementById("card").getBoundingClientRect();
+    const maxX = cardRect.width - noBtn.offsetWidth;
+    const maxY = cardRect.height - noBtn.offsetHeight;
+    noBtn.style.position = "relative";
+    noBtn.style.left = Math.random() * maxX + "px";
+    noBtn.style.top = Math.random() * maxY + "px";
+  }
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("touchstart", moveNoButton);
+
+  // Launch confetti
+  function launchConfetti() {
+    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+  }
+
+  // YES button click
+  yesBtn.addEventListener("click", () => {
+    // hide greeting, question, buttons
+    greeting.style.display = "none";
+    question.style.display = "none";
+    buttons.style.display = "none";
+
+    // show surprise letter emoji & text
+    surprise.style.display = "block";
+
+    // launch confetti
+    launchConfetti();
+
+    // after 2 seconds, hide surprise and show typing letter
+    setTimeout(() => {
+      surprise.style.display = "none";
+
+      // Letter lines
+      const lines = [
+`Happy Valentine’s Day my baby 💘
+I love you so much and I miss you very much 😘💔
+I just want this distance between us to end as soon as possible 🥺✨`,
+
+`Merko batana aapko yeh surprise kaisa laga 💌
+aur ab mere number kitne ho gaye hain 😜`,
+
+`You are very cute and adorable 🥰,
+aur terko lagta hai tu merko pareshan karti hai,
+but sach mein aisa nahi hai — main terse bilkul preshan nahi hota
+aur tu pagal nahi hai MERIII JAANNNNNN 💖💖💖`,
+
+`Haan, thik hai, kabhi kabhi misunderstandings ho jaati hain 😔,
+but koi baat nahi, hum baat karke unko solve kar lenge 🤝❤️`,
+
+`Merko bohot zyada mann kar raha hai terse milne ka 🥺,
+tere saath baithne ka 💞,
+terko dekhne ka 😍,
+tere saamne baith kar baat karne ka 💬💕,
+aur tere saath ghoomne ka 🌸`,
+
+`I LOVEEEE YOUUUUU MY BABYYYGIRLLL MYYY CUTUUU 😭💘💖
+THANK YOU FOR ACCEPTING MY VALENTIES PROPOSAL CHINKI 💞🥰`
+      ];
+
+      letter.style.display = "block";
+      letter.innerHTML = '<div class="heart">💘</div><h1>Happy Valentine’s Day Baby💕</h1>';
+      
+      let currentLine = 0;
+
+      function typeLine() {
+        if(currentLine >= lines.length) return;
+        const linePara = document.createElement("p");
+        letter.appendChild(linePara);
+        let charIndex = 0;
+        function typeChar() {
+          if(charIndex < lines[currentLine].length) {
+            linePara.textContent += lines[currentLine][charIndex];
+            charIndex++;
+            setTimeout(typeChar, 40); // typing speed
+          } else {
+            currentLine++;
+            setTimeout(typeLine, 300); // delay between lines
+          }
+        }
+        typeChar();
+      }
+
+      typeLine();
+
+      // keep floating hearts going
+      setInterval(createFloatingHeart, 500);
+
+      letter.scrollIntoView({ behavior: "smooth" });
+    }, 2000);
+  });
+</script>
+
+</body>
+</html>
